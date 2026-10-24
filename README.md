@@ -11,7 +11,7 @@
   Menlo), 14pt, a `Mac Terminal` theme (`#171717` background, white text), block cursor, `background-opacity = 0.98`.
 - **Bundled themes** (`Resources/ghostty/themes`): Mac Terminal, Terminal Basic, Pro, Pro Light, Homebrew, Novel,
   Man Page, Ocean, Grass, Red Sands, Apple System Colors (+ Light). All but `Mac Terminal` come from
-  [iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes) (MIT). Pick one with `theme = Homebrew`.
+  [iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes) (MIT). Only `Mac Terminal` is applied by default. To use another bundled theme, give its full path in your own Ghostty config, e.g. `theme = /Applications/Macuake.app/Contents/Resources/ghostty/themes/Homebrew` (theme *names* only resolve if Ghostty.app is installed or the theme is in `~/.config/ghostty/themes`).
 - **Bundled font:** Meslo LG M DZ for Powerline (Regular/Bold/Italic/Bold Italic, Apache-2.0, license included in
   `MaQuake/Defaults/Fonts`). It is registered per-process at launch through `ATSApplicationFontsPath`; nothing is
   installed into your system fonts.
@@ -21,6 +21,10 @@
 
 Do **not** set `background-blur = macos-glass-*`: Macuake has no glass view, so the renderer then skips drawing the
 background and the terminal turns fully transparent.
+
+### Remote hosts and `clear`
+
+If `clear` fails over SSH with `unknown terminal type`, add `shell-integration-features = cursor,path,title,ssh-env,ssh-terminfo` to your Ghostty config. Ghostty's `ssh` wrapper then installs its terminfo on the remote, or falls back to `xterm-256color`.
 
 ### Build and install (Apple Silicon, Xcode 26+)
 
