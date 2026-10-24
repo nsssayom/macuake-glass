@@ -47,8 +47,6 @@ final class GhosttyApp: @unchecked Sendable {
         // (e.g. Raycast, Spotlight, Finder) this env var won't be inherited.
         if getenv("GHOSTTY_RESOURCES_DIR") == nil {
             let candidates = [
-                // macuake-glass: themes bundled in the app (Contents/Resources/ghostty/themes)
-                (Bundle.main.resourcePath ?? "") + "/ghostty",
                 "/Applications/Ghostty.app/Contents/Resources/ghostty",
                 "/opt/homebrew/share/ghostty",
                 "/usr/local/share/ghostty",
@@ -263,9 +261,19 @@ final class GhosttyApp: @unchecked Sendable {
 
     /// macuake-glass: apply the defaults shipped in the app first, so the user's own
     /// Ghostty config (loaded afterwards) overrides them key by key.
+    /// Do NOT point GHOSTTY_RESOURCES_DIR at the bundle: Ghostty would then advertise
+    /// TERM=xterm-ghostty with a TERMINFO that does not exist, and zsh redraws break.
+    /// The bundled theme is therefore referenced by absolute path instead of by name.
     private static func loadBundledDefaults(_ cfg: ghostty_config_t) {
         guard let path = Bundle.main.path(forResource: "defaults", ofType: "conf") else { return }
         ghostty_config_load_file(cfg, path)
+        guard let res = Bundle.main.resourcePath else { return }
+        let theme = res + "/ghostty/themes/Mac Terminal"
+        guard FileManager.default.fileExists(atPath: theme) else { return }
+        let tmp = NSTemporaryDirectory() + "macuake-glass-theme.conf"
+        if (try? "theme = \"\(theme)\"\n".write(toFile: tmp, atomically: true, encoding: .utf8)) != nil {
+            ghostty_config_load_file(cfg, tmp)
+        }
     }
 
     func reloadConfig() {
