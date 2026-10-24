@@ -130,7 +130,7 @@ struct TabBarView: View {
                     }
         .padding(.top, 4)
         .frame(height: 36)
-        .background(Color.black.opacity(0.85))
+        .background(tabBarBackground)
         .environment(\.colorScheme, .dark)
         .contentShape(Rectangle())
     }
@@ -439,5 +439,15 @@ struct TabDropDelegate: DropDelegate {
 
     func validateDrop(info: DropInfo) -> Bool {
         draggedTabID != nil
+    }
+}
+
+private extension TabBarView {
+    /// Same color and opacity as the terminal (Ghostty config), so the bar and the terminal look like one surface.
+    var tabBarBackground: Color {
+        if let bg = GhosttyApp.shared.terminalBackground {
+            return Color(nsColor: bg.color).opacity(bg.opacity)
+        }
+        return Color.black.opacity(0.85)
     }
 }

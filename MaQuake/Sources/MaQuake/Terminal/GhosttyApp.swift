@@ -259,6 +259,19 @@ final class GhosttyApp: @unchecked Sendable {
         }
     }
 
+    /// macuake-glass: the terminal's configured background color and opacity, so UI chrome
+    /// (tab bar) can match the terminal instead of using its own hardcoded values.
+    var terminalBackground: (color: NSColor, opacity: Double)? {
+        guard let config else { return nil }
+        var color = ghostty_config_color_s()
+        var opacity: Double = 1
+        let bgKey = "background", opKey = "background-opacity"
+        guard ghostty_config_get(config, &color, bgKey, UInt(bgKey.utf8.count)) else { return nil }
+        _ = ghostty_config_get(config, &opacity, opKey, UInt(opKey.utf8.count))
+        let c = NSColor(red: CGFloat(color.r) / 255, green: CGFloat(color.g) / 255, blue: CGFloat(color.b) / 255, alpha: 1)
+        return (c, min(max(opacity, 0), 1))
+    }
+
     /// macuake-glass: apply the defaults shipped in the app first, so the user's own
     /// Ghostty config (loaded afterwards) overrides them key by key.
     /// Do NOT point GHOSTTY_RESOURCES_DIR at the bundle: Ghostty would then advertise
