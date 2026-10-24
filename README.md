@@ -1,3 +1,38 @@
+> **macuake-glass** is a fork of [menemy/macuake](https://github.com/menemy/macuake) with a translucent terminal
+> and a macOS Terminal.app look out of the box. Upstream's work and license (MIT) are unchanged; see below.
+
+## macuake-glass changes
+
+- **Translucent terminal.** Upstream paints solid black behind the terminal in three places, so Ghostty's
+  `background-opacity` never shows. This fork makes `GhosttyBackend`'s container layer, `GhosttyTerminalView`
+  and the `PanelContentView` terminal area clear.
+- **Bundled defaults** (`MaQuake/Defaults/`): `defaults.conf` is loaded *before* your own Ghostty config, so
+  anything you set in `~/.config/ghostty/config` still wins. It sets a Terminal.app-like look: Meslo (falls back to
+  Menlo), 14pt, a `Mac Terminal` theme (`#171717` background, white text), block cursor, `background-opacity = 0.98`.
+- **Bundled themes** (`Resources/ghostty/themes`): Mac Terminal, Terminal Basic, Pro, Pro Light, Homebrew, Novel,
+  Man Page, Ocean, Grass, Red Sands, Apple System Colors (+ Light). All but `Mac Terminal` come from
+  [iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes) (MIT). Pick one with `theme = Homebrew`.
+- **No auto-update** from upstream (it would replace this build).
+- `scripts/build-glass.sh`: reproducible ad-hoc-signed build, no Developer ID required.
+
+Do **not** set `background-blur = macos-glass-*`: Macuake has no glass view, so the renderer then skips drawing the
+background and the terminal turns fully transparent.
+
+### Build and install (Apple Silicon, Xcode 26+)
+
+```bash
+git clone https://github.com/nsssayom/macuake-glass.git && cd macuake-glass
+mkdir -p vendor/ghostty/macos
+gh release download ghosttykit-332b2aefc6e72d363aa93ab6ecfc86eeeeb5ed28 -R menemy/macuake \
+  --pattern GhosttyKit.xcframework.tar.gz --dir /tmp
+tar xzf /tmp/GhosttyKit.xcframework.tar.gz -C vendor/ghostty/macos
+./scripts/build-glass.sh --install      # quits a running Macuake and replaces /Applications/Macuake.app
+```
+
+The result is ad-hoc signed, so macOS may ask you to approve it on first launch. Not affiliated with the upstream author.
+
+---
+
 # macuake
 
 > **Alpha** — Quake-style drop-down terminal for macOS, powered by [Ghostty](https://ghostty.org).

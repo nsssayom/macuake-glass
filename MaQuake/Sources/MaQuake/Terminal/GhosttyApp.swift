@@ -47,6 +47,8 @@ final class GhosttyApp: @unchecked Sendable {
         // (e.g. Raycast, Spotlight, Finder) this env var won't be inherited.
         if getenv("GHOSTTY_RESOURCES_DIR") == nil {
             let candidates = [
+                // macuake-glass: themes bundled in the app (Contents/Resources/ghostty/themes)
+                (Bundle.main.resourcePath ?? "") + "/ghostty",
                 "/Applications/Ghostty.app/Contents/Resources/ghostty",
                 "/opt/homebrew/share/ghostty",
                 "/usr/local/share/ghostty",
@@ -70,6 +72,7 @@ final class GhosttyApp: @unchecked Sendable {
             os_log(.error, log: log, "ghostty_config_new returned nil")
             return
         }
+        Self.loadBundledDefaults(primaryConfig)
         ghostty_config_load_default_files(primaryConfig)
         ghostty_config_finalize(primaryConfig)
 
@@ -258,12 +261,20 @@ final class GhosttyApp: @unchecked Sendable {
         }
     }
 
+    /// macuake-glass: apply the defaults shipped in the app first, so the user's own
+    /// Ghostty config (loaded afterwards) overrides them key by key.
+    private static func loadBundledDefaults(_ cfg: ghostty_config_t) {
+        guard let path = Bundle.main.path(forResource: "defaults", ofType: "conf") else { return }
+        ghostty_config_load_file(cfg, path)
+    }
+
     func reloadConfig() {
         guard let app, let oldConfig = config else { return }
         guard let newConfig = ghostty_config_new() else {
             os_log(.error, log: log, "reloadConfig: ghostty_config_new failed")
             return
         }
+        Self.loadBundledDefaults(newConfig)
         ghostty_config_load_default_files(newConfig)
         ghostty_config_finalize(newConfig)
 

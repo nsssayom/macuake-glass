@@ -23,8 +23,8 @@ final class GhosttyBackend: NSObject, TerminalBackend {
         // Opaque container: solid black layer behind the terminal
         containerView = NSView(frame: frame)
         containerView.wantsLayer = true
-        containerView.layer?.isOpaque = true
-        containerView.layer?.backgroundColor = NSColor.black.cgColor
+        containerView.layer?.isOpaque = false
+        containerView.layer?.backgroundColor = NSColor.clear.cgColor
 
         super.init()
 

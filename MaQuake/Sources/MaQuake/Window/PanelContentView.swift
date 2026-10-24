@@ -65,7 +65,7 @@ struct PanelContentView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.black)
+            .background(Color.clear)
         }
         .frame(width: currentWidth, height: windowController.terminalSize.height)
     }

@@ -28,7 +28,7 @@ final class GhosttyTerminalView: NSView {
     // MARK: - Responder
 
     override var acceptsFirstResponder: Bool { true }
-    override var isOpaque: Bool { true }
+    override var isOpaque: Bool { false }
 
     override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
