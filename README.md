@@ -30,11 +30,8 @@ If `clear` fails over SSH with `unknown terminal type`, add `shell-integration-f
 
 ```bash
 git clone https://github.com/nsssayom/macuake-glass.git && cd macuake-glass
-mkdir -p vendor/ghostty/macos
-gh release download ghosttykit-332b2aefc6e72d363aa93ab6ecfc86eeeeb5ed28 -R menemy/macuake \
-  --pattern GhosttyKit.xcframework.tar.gz --dir /tmp
-tar xzf /tmp/GhosttyKit.xcframework.tar.gz -C vendor/ghostty/macos
 ./scripts/build-glass.sh --install      # quits a running Macuake and replaces /Applications/Macuake.app
+./scripts/clean-glass.sh                # afterwards: frees ~2 GB of build cache (everything is re-fetched on demand)
 ```
 
 Or download the notarized DMG from [Releases](https://github.com/nsssayom/macuake-glass/releases) (when available).

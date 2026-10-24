@@ -5,7 +5,7 @@ set -euo pipefail
 # Usage: ./scripts/build-glass.sh [--install]
 #   SIGN_ID="Developer ID Application: Name (TEAMID)"  sign for distribution (hardened runtime)
 #   default SIGN_ID="-"                                 ad-hoc, fine for local use
-# Needs: Xcode, vendor/ghostty/macos/GhosttyKit.xcframework (see README "macuake-glass").
+# Needs: Xcode and the gh CLI (GhosttyKit is fetched automatically).
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 APP="$ROOT/build/Macuake.app"
@@ -13,7 +13,14 @@ BIN="$APP/Contents/MacOS/Macuake"
 SIGN_ID="${SIGN_ID:--}"
 cd "$ROOT"
 
-[ -d vendor/ghostty/macos/GhosttyKit.xcframework ] || { echo "Missing GhosttyKit.xcframework (see README)"; exit 1; }
+# GhosttyKit is downloaded on demand (67 MB) and removed again by scripts/clean-glass.sh
+GK_TAG="ghosttykit-332b2aefc6e72d363aa93ab6ecfc86eeeeb5ed28"
+if [ ! -d vendor/ghostty/macos/GhosttyKit.xcframework ]; then
+  echo "==> downloading prebuilt GhosttyKit ($GK_TAG)"
+  GK_TMP="$(mktemp -d)"; trap 'rm -rf "$GK_TMP"' EXIT
+  gh release download "$GK_TAG" -R menemy/macuake --pattern GhosttyKit.xcframework.tar.gz --dir "$GK_TMP"
+  mkdir -p vendor/ghostty/macos && tar xzf "$GK_TMP/GhosttyKit.xcframework.tar.gz" -C vendor/ghostty/macos
+fi
 
 echo "==> swift build (release, arm64, Swift 5 language mode: MCP swift-sdk fails strict concurrency on Xcode 27)"
 swift build -c release --arch arm64 -Xswiftc -swift-version -Xswiftc 5

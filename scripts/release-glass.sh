@@ -27,4 +27,5 @@ shasum -a 256 "$DMG" | tee "$DMG.sha256"
 if [ "${2:-}" = "--publish" ]; then
   gh release create "$TAG" "$DMG" "$DMG.sha256" -R "${RELEASE_REPO:-nsssayom/macuake-glass}" --target glass --title "macuake-glass $TAG" \
     --notes "Signed with Developer ID and notarized. Translucent terminal, Terminal.app-style defaults, bundled themes and Meslo font. See README."
+  ./scripts/clean-glass.sh   # the DMG now lives on GitHub; do not keep ~2 GB of build output
 fi
