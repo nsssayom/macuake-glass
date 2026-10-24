@@ -25,6 +25,6 @@ spctl -a -t open --context context:primary-signature -v "$DMG"
 shasum -a 256 "$DMG" | tee "$DMG.sha256"
 
 if [ "${2:-}" = "--publish" ]; then
-  gh release create "$TAG" "$DMG" "$DMG.sha256" --title "macuake-glass $TAG" \
+  gh release create "$TAG" "$DMG" "$DMG.sha256" -R "${RELEASE_REPO:-nsssayom/macuake-glass}" --target glass --title "macuake-glass $TAG" \
     --notes "Signed with Developer ID and notarized. Translucent terminal, Terminal.app-style defaults, bundled themes and Meslo font. See README."
 fi
