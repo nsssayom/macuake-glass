@@ -7,13 +7,17 @@
   `background-opacity` never shows. This fork makes `GhosttyBackend`'s container layer, `GhosttyTerminalView`
   and the `PanelContentView` terminal area clear.
 - **Bundled defaults** (`MaQuake/Defaults/`): `defaults.conf` is loaded *before* your own Ghostty config, so
-  anything you set in `~/.config/ghostty/config` still wins. It sets a Terminal.app-like look: Meslo (falls back to
+  anything you set in `~/.config/ghostty/config` still wins. It sets a Terminal.app-like look: bundled Meslo (falls back to
   Menlo), 14pt, a `Mac Terminal` theme (`#171717` background, white text), block cursor, `background-opacity = 0.98`.
 - **Bundled themes** (`Resources/ghostty/themes`): Mac Terminal, Terminal Basic, Pro, Pro Light, Homebrew, Novel,
   Man Page, Ocean, Grass, Red Sands, Apple System Colors (+ Light). All but `Mac Terminal` come from
   [iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes) (MIT). Pick one with `theme = Homebrew`.
+- **Bundled font:** Meslo LG M DZ for Powerline (Regular/Bold/Italic/Bold Italic, Apache-2.0, license included in
+  `MaQuake/Defaults/Fonts`). It is registered per-process at launch through `ATSApplicationFontsPath`; nothing is
+  installed into your system fonts.
 - **No auto-update** from upstream (it would replace this build).
-- `scripts/build-glass.sh`: reproducible ad-hoc-signed build, no Developer ID required.
+- `scripts/build-glass.sh`: reproducible build (ad-hoc signed by default, or `SIGN_ID="Developer ID Application: ..."`).
+  `scripts/release-glass.sh`: Developer-ID sign, notarize, staple and publish a DMG.
 
 Do **not** set `background-blur = macos-glass-*`: Macuake has no glass view, so the renderer then skips drawing the
 background and the terminal turns fully transparent.
@@ -29,7 +33,8 @@ tar xzf /tmp/GhosttyKit.xcframework.tar.gz -C vendor/ghostty/macos
 ./scripts/build-glass.sh --install      # quits a running Macuake and replaces /Applications/Macuake.app
 ```
 
-The result is ad-hoc signed, so macOS may ask you to approve it on first launch. Not affiliated with the upstream author.
+Or download the notarized DMG from [Releases](https://github.com/nsssayom/macuake-glass/releases) (when available).
+A source build is ad-hoc signed, so macOS may ask you to approve it on first launch. Not affiliated with the upstream author.
 
 ---
 
